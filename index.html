@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>给十年后的我</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,2 19.3,11.5 29.3,11.7 21.3,17.7 24.2,27.3 16,21.6 7.8,27.3 10.7,17.7 2.7,11.7 12.7,11.5' fill='%23FFC81E' stroke='%23B87C00'/%3E%3C/svg%3E">
+<style>
+/* ===== 令牌：Windows 98 经典配色 ===== */
+:root{
+  --face:#C0C0C0;
+  --face2:#DFDFDF;
+  --white:#FFFFFF;
+  --shadow:#808080;
+  --dark:#000000;
+  --navy:#000080;
+  --navy2:#1084D0;
+  --teal:#008080;
+  --gold:#FFC81E;
+  --gold-d:#B87C00;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;padding:0;overflow:hidden;}
+body{
+  background:var(--teal);
+  font-family:"宋体","SimSun","MS Sans Serif","Microsoft YaHei",sans-serif;
+  font-size:13px;
+  color:#000;
+  -webkit-user-select:none;user-select:none;
+  cursor:default;
+  -webkit-font-smoothing:none;
+}
+
+/* ===== 桌面 ===== */
+#deskIcon{
+  position:absolute;left:14px;bottom:44px;width:98px;padding:6px 4px 6px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  border:1px dotted transparent;cursor:pointer;outline:none;z-index:3;
+}
+#deskIcon.selected{background:rgba(0,0,128,.30);border-color:#ffffff;}
+#deskIcon .lbl{
+  font-size:12px;line-height:1.3;color:#fff;text-align:center;
+  text-shadow:1px 1px 0 rgba(0,0,0,.55);word-break:break-all;
+}
+#deskIcon .hint{font-size:11px;color:#bfe6e6;text-shadow:1px 1px 0 rgba(0,0,0,.45);}
+#deskIcon:focus-visible{outline:1px dotted #fff;outline-offset:1px;}
+
+#deskIcons{position:absolute;left:12px;top:14px;display:flex;flex-direction:column;gap:8px;z-index:3;}
+.dicon{
+  width:92px;padding:5px 4px;display:flex;flex-direction:column;align-items:center;gap:5px;
+  border:1px dotted transparent;cursor:pointer;outline:none;
+}
+.dicon.selected{background:rgba(0,0,128,.30);border-color:#ffffff;}
+.dicon .lbl{font-size:12px;line-height:1.25;color:#fff;text-align:center;text-shadow:1px 1px 0 rgba(0,0,0,.55);}
+.dicon svg{display:block;}
+.dicon:focus-visible{outline:1px dotted #fff;outline-offset:1px;}
+
+/* ===== 舞台 ===== */
+#stage{position:fixed;inset:0;overflow:hidden;pointer-events:none;}
+
+/* ===== 窗口外壳 ===== */
+.win{
+  position:absolute;
+  background:var(--face);
+  border:2px solid;
+  border-color:var(--face2) var(--dark) var(--dark) var(--face2);
+  box-shadow:inset -1px -1px 0 var(--shadow), inset 1px 1px 0 var(--white);
+  padding:3px;
+  pointer-events:auto;
+}
+.tb{
+  height:20px;display:flex;align-items:center;gap:3px;
+  padding:0 2px 0 4px;
+  background:linear-gradient(90deg,#000080 0%,#1084D0 100%);
+}
+.tb .t{
+  flex:1;min-width:0;color:#fff;font-weight:bold;font-size:12px;line-height:1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-bottom:1px;
+}
+.tb .x{
+  flex:0 0 auto;width:16px;height:14px;margin-left:auto;padding:0;
+  background:var(--face);border:1px solid;
+  border-color:#FFFFFF #000000 #000000 #FFFFFF;
+  box-shadow:inset -1px -1px 0 var(--shadow), inset 1px 1px 0 var(--face2);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.tb .x:active{border-color:#000000 #FFFFFF #FFFFFF #000000;box-shadow:inset 1px 1px 0 var(--shadow);}
+.tb .x i{position:relative;display:block;width:7px;height:7px;}
+.tb .x i::before,.tb .x i::after{content:"";position:absolute;left:-1px;top:3px;width:9px;height:1px;background:#000;}
+.tb .x i::before{transform:rotate(45deg);}
+.tb .x i::after{transform:rotate(-45deg);}
+
+/* ===== 按钮 ===== */
+.btn{
+  font-family:inherit;font-size:13px;line-height:1;color:#000;
+  background:var(--face);
+  border:2px solid;border-color:#FFFFFF #000000 #000000 #FFFFFF;
+  box-shadow:inset -1px -1px 0 var(--shadow), inset 1px 1px 0 var(--face2);
+  min-width:86px;height:28px;padding:0 12px;
+  display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.btn:active{
+  border-color:#000000 #FFFFFF #FFFFFF #000000;
+  box-shadow:inset 1px 1px 0 var(--shadow);
+  padding-top:1px;
+}
+.btn:focus{outline:none;}
+.btn.default{outline:1px solid #000;outline-offset:-5px;}
+.btn:focus-visible{outline:1px dotted #000;outline-offset:-5px;}
+
+/* ===== 对话框 ===== */
+.dialog{left:50%;top:50%;translate:-50% -50%;width:458px;max-width:calc(100vw - 24px);}
+.dlg-body{display:flex;gap:14px;align-items:center;padding:18px 18px 10px;min-height:70px;}
+.dlg-ico{flex:0 0 40px;width:40px;height:40px;}
+.dlg-ico svg{display:block;width:40px;height:40px;}
+.dlg-msg{flex:1;min-width:0;font-size:15px;line-height:1.8;word-break:break-word;}
+.dlg-btns{display:flex;gap:10px;justify-content:center;padding:10px 18px 18px;}
+
+/* ===== 点阵字窗口 ===== */
+.charwin{padding:3px;}
+.charwrap{padding:3px;background:#ffffff;border:1px solid #808080;}
+.charwrap canvas{display:block;}
+.tb.inactive{background:linear-gradient(90deg,#7c7c7c 0%,#b7b7b7 100%);}
+.tb.inactive .t{color:#000000;}
+
+/* ===== 隧道幽灵窗 ===== */
+.ghost{pointer-events:none;width:280px;border-color:var(--face2) #000 #000 var(--face2);}
+.ghost-body{display:flex;flex-direction:column;gap:6px;padding:9px 8px 12px;}
+.ghost-body b{display:block;height:8px;background:#8c8c8c;
+  border:1px solid;border-color:#DFDFDF #000 #000 #DFDFDF;}
+.ghost .tb .t{opacity:.85;}
+
+/* ===== 星星轨迹小窗 ===== */
+.mini{pointer-events:none;width:76px;padding:2px;}
+.mini .tb{height:13px;padding:0 3px;gap:0;}
+.mini .tb .t{font-size:10px;padding-bottom:0;}
+.mini-body{height:24px;display:flex;align-items:center;justify-content:center;background:var(--face);}
+.mini-body svg{display:block;width:15px;height:15px;}
+
+/* ===== 大星星 ===== */
+.bigstar{left:50%;top:50%;translate:-50% -50%;position:absolute;pointer-events:none;}
+.bigstar svg{position:relative;display:block;width:100%;height:100%;
+  filter:drop-shadow(0 0 12px rgba(255,206,58,.95)) drop-shadow(0 0 38px rgba(255,168,20,.65));}
+.bigstar .halo{
+  position:absolute;inset:-45%;
+  background:radial-gradient(circle, rgba(255,226,150,.62) 0%, rgba(255,199,64,.30) 34%, rgba(255,190,40,0) 66%);
+}
+
+/* ===== 小提示窗 ===== */
+.note{width:200px;display:flex;flex-direction:column;}
+.note-body{display:flex;gap:9px;align-items:center;font-size:14px;line-height:1.6;flex:1;
+  padding:13px 10px 8px;min-height:34px;word-break:break-word;}
+.note-ico{flex:0 0 30px;width:30px;height:30px;}
+.note-ico svg{display:block;width:30px;height:30px;}
+.note-txt{flex:1;min-width:0;}
+.note-btns{display:flex;justify-content:center;padding:4px 10px 10px;}
+.note .btn{min-width:64px;height:24px;font-size:12px;}
+
+/* ===== 任务栏 ===== */
+#taskbar{
+  position:fixed;left:0;right:0;bottom:0;height:30px;z-index:900;
+  display:flex;align-items:center;gap:4px;padding:2px 3px;
+  background:var(--face);
+  border-top:2px solid var(--face2);
+  box-shadow:inset 0 1px 0 #ffffff;
+}
+#startBtn{
+  display:flex;align-items:center;gap:4px;height:23px;padding:0 7px 0 4px;
+  font-family:inherit;font-size:12px;font-weight:bold;color:#000;
+  background:var(--face);border:2px solid;
+  border-color:#FFFFFF #000000 #000000 #FFFFFF;
+  box-shadow:inset -1px -1px 0 var(--shadow), inset 1px 1px 0 var(--face2);
+  cursor:pointer;
+}
+#startBtn:active,#startBtn[aria-expanded="true"]{
+  border-color:#000000 #FFFFFF #FFFFFF #000000;
+  box-shadow:inset 1px 1px 0 var(--shadow);
+  padding-top:1px;
+}
+#startBtn .flag{width:16px;height:14px;display:block;}
+
+#tray{
+  margin-left:auto;display:flex;align-items:center;gap:8px;height:23px;padding:0 7px;
+  border:2px solid;border-color:var(--shadow) #FFFFFF #FFFFFF var(--shadow);
+  box-shadow:inset 1px 1px 0 #000000, inset -1px -1px 0 var(--face2);
+}
+#sndBtn{width:16px;height:16px;padding:0;border:0;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+#sndBtn:focus-visible{outline:1px dotted #000;outline-offset:1px;}
+#clock{font-size:12px;line-height:1;min-width:38px;text-align:center;}
+
+/* ===== 开始菜单 ===== */
+#startMenu{
+  position:fixed;left:2px;bottom:31px;width:196px;z-index:950;display:none;
+  background:var(--face);padding:3px;
+  border:2px solid;border-color:#FFFFFF #000000 #000000 #FFFFFF;
+  box-shadow:2px 2px 0 rgba(0,0,0,.35);
+}
+#startMenu.on{display:block;}
+.mi{display:flex;align-items:center;gap:9px;padding:6px 8px;font-size:12px;cursor:pointer;}
+.mi:hover{background:var(--navy);color:#fff;}
+.mi svg{width:16px;height:16px;display:block;flex:0 0 16px;}
+.mi-sep{height:2px;margin:3px 4px;border-top:1px solid var(--shadow);border-bottom:1px solid #fff;}
+
+/* ===== 案例比例：整套 UI 按视口等比放大 ===== */
+:root{--u:1.8;}
+body{font-size:calc(11px * var(--u));}
+.tb{height:calc(18px * var(--u));gap:calc(3px * var(--u));padding:0 calc(3px * var(--u)) 0 calc(5px * var(--u));}
+.tb .t{font-size:calc(11px * var(--u));}
+.tb .x{width:calc(15px * var(--u));height:calc(14px * var(--u));}
+.tb .x i{width:calc(7px * var(--u));height:calc(7px * var(--u));}
+.tb .x i::before,.tb .x i::after{left:calc(-1px * var(--u));top:calc(3px * var(--u));width:calc(9px * var(--u));height:calc(var(--u));}
+.btn{font-size:calc(11px * var(--u));min-width:calc(92px * var(--u));height:calc(27px * var(--u));padding:0 calc(9px * var(--u));}
+.dialog{width:calc(315px * var(--u));}
+.dlg-body{gap:calc(11px * var(--u));padding:calc(14px * var(--u)) calc(14px * var(--u)) calc(4px * var(--u));min-height:calc(54px * var(--u));}
+.dlg-ico{flex:0 0 calc(40px * var(--u));width:calc(40px * var(--u));height:calc(40px * var(--u));}
+.dlg-ico svg{width:calc(40px * var(--u));height:calc(40px * var(--u));}
+.dlg-msg{font-size:calc(18px * var(--u));line-height:1.4;}
+.dlg-btns{gap:calc(9px * var(--u));padding:calc(6px * var(--u)) calc(14px * var(--u)) calc(14px * var(--u));}
+.note-body{font-size:calc(15px * var(--u));gap:calc(8px * var(--u));padding:calc(10px * var(--u)) calc(9px * var(--u)) calc(4px * var(--u));}
+.note-ico{flex:0 0 calc(26px * var(--u));width:calc(26px * var(--u));height:calc(26px * var(--u));}
+.note-ico svg{width:calc(26px * var(--u));height:calc(26px * var(--u));}
+.note .btn{min-width:calc(56px * var(--u));height:calc(22px * var(--u));font-size:calc(10px * var(--u));}
+.note-btns{padding:calc(2px * var(--u)) calc(8px * var(--u)) calc(7px * var(--u));}
+#deskIcons{left:calc(10px * var(--u));top:calc(10px * var(--u));gap:calc(6px * var(--u));}
+.dicon{width:calc(78px * var(--u));gap:calc(4px * var(--u));padding:calc(4px * var(--u)) 0;}
+.dicon svg{width:calc(30px * var(--u));height:calc(30px * var(--u));}
+.dicon .lbl{font-size:calc(10px * var(--u));}
+#deskIcon{width:calc(96px * var(--u));left:calc(10px * var(--u));bottom:calc(34px * var(--u));gap:calc(4px * var(--u));padding:calc(5px * var(--u)) 0;}
+#deskIcon svg{width:calc(30px * var(--u));height:calc(30px * var(--u));}
+#deskIcon .lbl{font-size:calc(10px * var(--u));}
+#deskIcon .hint{font-size:calc(9px * var(--u));}
+#taskbar{height:calc(28px * var(--u));gap:calc(3px * var(--u));padding:calc(2px * var(--u)) calc(3px * var(--u));}
+#startBtn{height:calc(22px * var(--u));font-size:calc(11px * var(--u));gap:calc(4px * var(--u));padding:0 calc(6px * var(--u)) 0 calc(4px * var(--u));}
+#startBtn .flag{width:calc(15px * var(--u));height:calc(13px * var(--u));}
+#taskBtn{
+  display:flex;align-items:center;height:calc(22px * var(--u));padding:0 calc(8px * var(--u));
+  font-family:inherit;font-size:calc(11px * var(--u));color:#000;white-space:nowrap;overflow:hidden;
+  background:var(--face);border:2px solid;border-color:var(--shadow) #FFFFFF #FFFFFF var(--shadow);
+  box-shadow:inset 1px 1px 0 #000000, inset -1px -1px 0 var(--face2);
+  cursor:pointer;max-width:calc(190px * var(--u));
+}
+#taskBtn[aria-pressed="false"]{
+  border-color:#FFFFFF #000000 #000000 #FFFFFF;
+  box-shadow:inset -1px -1px 0 var(--shadow), inset 1px 1px 0 var(--face2);
+}
+#tray{height:calc(22px * var(--u));gap:calc(8px * var(--u));padding:0 calc(6px * var(--u));}
+#sndBtn{width:calc(16px * var(--u));height:calc(16px * var(--u));}
+#clock{font-size:calc(11px * var(--u));min-width:calc(72px * var(--u));}
+#startMenu{width:calc(196px * var(--u));bottom:calc(29px * var(--u));padding:calc(3px * var(--u));}
+.mi{font-size:calc(11px * var(--u));gap:calc(8px * var(--u));padding:calc(5px * var(--u)) calc(7px * var(--u));}
+.mi svg{width:calc(15px * var(--u));height:calc(15px * var(--u));flex:0 0 calc(15px * var(--u));}
+.mini{width:calc(58px * var(--u));}
+.mini .tb{height:calc(13px * var(--u));}
+.mini .tb .t{font-size:calc(9px * var(--u));}
+.mini-body{height:calc(20px * var(--u));}
+.mini-body svg{width:calc(12px * var(--u));height:calc(12px * var(--u));}
+.ghost{width:calc(210px * var(--u));}
+
+@media (max-width:720px){
+  .dialog{width:calc(100vw - 16px);}
+}
+</style>
+</head>
+<body>
+
+<div id="deskIcons">
+  <div class="dicon" tabindex="0" role="button" data-msg="这台电脑里，已经没有我的文件了。">
+    <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+      <rect x="2" y="4" width="28" height="20" fill="#C0C0C0" stroke="#808080"/>
+      <rect x="4" y="6" width="24" height="14" fill="#008080"/>
+      <rect x="11" y="24" width="10" height="4" fill="#C0C0C0" stroke="#808080"/>
+      <rect x="4" y="29" width="24" height="2" fill="#808080"/>
+    </svg>
+    <div class="lbl">我的电脑</div>
+  </div>
+  <div class="dicon" tabindex="0" role="button" data-msg="里面是暑假作业，还差一半没写完。">
+    <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M3 10h9l3 3h17v15H3z" fill="#FFD24A" stroke="#C89A00"/>
+      <path d="M7 15h18v10H7z" fill="#FFFFFF" stroke="#BDBDBD"/>
+      <rect x="9" y="17" width="14" height="1.5" fill="#9A9A9A"/>
+      <rect x="9" y="20" width="11" height="1.5" fill="#9A9A9A"/>
+    </svg>
+    <div class="lbl">我的文档</div>
+  </div>
+  <div class="dicon" tabindex="0" role="button" data-msg="别点，都是我删掉的作文。">
+    <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+      <rect x="6" y="8" width="20" height="2.6" fill="#DFDFDF" stroke="#606060"/>
+      <path d="M8 11h16l-1.6 18H9.6z" fill="#C0C0C0" stroke="#606060"/>
+      <path d="M13 15v9M19 15v9" stroke="#808080"/>
+    </svg>
+    <div class="lbl">回收站</div>
+  </div>
+  <div class="dicon" tabindex="0" role="button" data-msg="作业没写完，先出去玩一下。">
+    <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M3 10h9l3 3h17v15H3z" fill="#FFD24A" stroke="#C89A00"/>
+      <rect x="13" y="14" width="13" height="10" fill="#FFFFFF" stroke="#808080"/>
+      <rect x="15" y="16.5" width="9" height="1.2" fill="#B0B0B0"/>
+      <rect x="15" y="19" width="6" height="1.2" fill="#B0B0B0"/>
+    </svg>
+    <div class="lbl">作业</div>
+  </div>
+  <div class="dicon" tabindex="0" role="button" data-msg="扫雷最好成绩：12 秒。">
+    <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M3 10h9l3 3h17v15H3z" fill="#FFD24A" stroke="#C89A00"/>
+      <polygon points="20,14 21.6,18.2 26,18.2 22.4,20.9 23.8,25 20,22.3 16.2,25 17.6,20.9 14,18.2 18.4,18.2" fill="#FFC81E" stroke="#B87C00"/>
+    </svg>
+    <div class="lbl">小游戏</div>
+  </div>
+</div>
+
+<div id="deskIcon" tabindex="0" role="button" aria-label="打开 给十年后的我.vbs">
+  <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+    <path d="M6 2h13l7 7v21H6z" fill="#FFFFFF" stroke="#808080" stroke-width="1"/>
+    <path d="M19 2l7 7h-7z" fill="#DFDFDF" stroke="#808080" stroke-width="1"/>
+    <rect x="9" y="13" width="11" height="1.5" fill="#B4B4B4"/>
+    <rect x="9" y="17" width="11" height="1.5" fill="#B4B4B4"/>
+    <rect x="9" y="21" width="7" height="1.5" fill="#B4B4B4"/>
+    <circle cx="23" cy="24" r="6.2" fill="#1B62D0" stroke="#062A72" stroke-width="1"/>
+    <path d="M20.2 24.1l2 2 4-4.2" fill="none" stroke="#ffffff" stroke-width="1.6"/>
+  </svg>
+  <div class="lbl">给十年后的我.vbs</div>
+  <div class="hint">双击打开</div>
+</div>
+
+<div id="stage"></div>
+
+<div id="taskbar">
+  <button id="startBtn" aria-haspopup="true" aria-expanded="false">
+    <svg class="flag" viewBox="0 0 16 14" aria-hidden="true">
+      <rect x="1" y="2" width="6" height="5" fill="#FF3D2E"/>
+      <rect x="8" y="1" width="6" height="5" fill="#3DBE3D"/>
+      <rect x="1" y="8" width="6" height="5" fill="#2C7BE5"/>
+      <rect x="8" y="7" width="6" height="5" fill="#FFC81E"/>
+    </svg>
+    开始
+  </button>
+  <button id="taskBtn" aria-pressed="true">给十年后的我</button>
+  <div id="tray">
+    <button id="sndBtn" aria-pressed="false" aria-label="声音开关">
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+        <path d="M3 6h2.4L9 3.2v9.6L5.4 10H3z" fill="#C0C0C0" stroke="#000" stroke-width="1"/>
+        <path d="M10.6 5.2c1.2 1.2 1.2 4.4 0 5.6" fill="none" stroke="#000" stroke-width="1"/>
+        <path d="M12.4 3.4c2.1 2.1 2.1 7.1 0 9.2" fill="none" stroke="#000" stroke-width="1"/>
+        <path id="muteSlash" d="M1.5 1.5l13 13" stroke="#D40000" stroke-width="2" style="display:none"/>
+      </svg>
+    </button>
+    <span id="clock">00:00</span>
+  </div>
+</div>
+
+<div id="startMenu" role="menu">
+  <div class="mi" data-act="restart" role="menuitem">
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M2 3h8l4 4v9H2z" fill="#fff" stroke="#808080"/>
+      <path d="M10 3l4 4h-4z" fill="#DFDFDF" stroke="#808080"/>
+    </svg>
+    给十年后的我
+  </div>
+  <div class="mi" data-act="about" role="menuitem">
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <circle cx="8" cy="8" r="6.4" fill="#1B62D0" stroke="#062A72"/>
+      <rect x="7.2" y="6.4" width="1.6" height="5.2" fill="#fff"/>
+      <circle cx="8" cy="4.6" r="1" fill="#fff"/>
+    </svg>
+    关于本程序
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var stage = document.getElementById('stage');
+var deskIcon = document.getElementById('deskIcon');
+var startBtn = document.getElementById('startBtn');
+var startMenu = document.getElementById('startMenu');
+var clockEl = document.getElementById('clock');
+var sndBtn = document.getElementById('sndBtn');
+var muteSlash = document.getElementById('muteSlash');
+var taskBtn = document.getElementById('taskBtn');
+
+/* 案例取景是 640×360，整套 UI 按同一比例放大到当前屏幕 */
+var U_SCALE = 1;
+function setScale(){
+  var u = Math.min(window.innerWidth / 640, window.innerHeight / 360);
+  u = Math.max(1.12, Math.min(1.9, u));
+  U_SCALE = u;
+  document.documentElement.style.setProperty('--u', u.toFixed(3));
+}
+setScale();
+
+var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var zTop = 10;
+var AC = null;
+var muted = false;
+var started = false;
+
+function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+/* ================= 声音（首次点击后才启用） ================= */
+function audioInit(){
+  if(!AC){
+    try{
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if(Ctx) AC = new Ctx();
+    }catch(e){ AC = null; }
+  }
+  if(AC && AC.state === 'suspended'){ AC.resume(); }
+}
+function blip(freq, dur, vol, type){
+  if(!AC || muted) return;
+  var t = AC.currentTime;
+  var o = AC.createOscillator();
+  var g = AC.createGain();
+  o.type = type || 'sine';
+  o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(vol, t + 0.006);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(AC.destination);
+  o.start(t); o.stop(t + dur + 0.03);
+}
+function sndDialog(){ blip(1046, 0.09, 0.12); setTimeout(function(){ blip(784, 0.15, 0.08); }, 70); }
+function sndClick(){ blip(1320, 0.035, 0.06, 'square'); }
+function sndPop(){ blip(1480, 0.04, 0.045, 'triangle'); }
+function sndStar(){
+  [0, 110, 220, 330].forEach(function(d, i){
+    setTimeout(function(){ blip([523, 659, 784, 1046][i], 0.55, 0.11); }, d);
+  });
+}
+
+/* ================= 图标 ================= */
+var STAR_PTS = '16,2 19.3,11.5 29.3,11.7 21.3,17.7 24.2,27.3 16,21.6 7.8,27.3 10.7,17.7 2.7,11.7 12.7,11.5';
+
+var ICON_STAR = '<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">'
+  + '<polygon points="' + STAR_PTS + '" fill="#FFC81E" stroke="#B87C00" stroke-width="1"/>'
+  + '<polygon points="16,5 18.4,11 24.4,11.2 19.7,15 21.4,21 16,17.5 10.6,21 12.3,15 7.6,11.2 13.6,11" fill="#FFE179" opacity=".55"/>'
+  + '</svg>';
+
+var ICON_INFO = '<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">'
+  + '<defs><radialGradient id="iball" cx="34%" cy="26%" r="74%">'
+  + '<stop offset="0" stop-color="#9CCBFF"/><stop offset=".52" stop-color="#1B62D0"/><stop offset="1" stop-color="#06286B"/>'
+  + '</radialGradient></defs>'
+  + '<circle cx="16" cy="16" r="13.6" fill="url(#iball)" stroke="#06286B" stroke-width="1"/>'
+  + '<rect x="14.35" y="12.7" width="3.3" height="10.9" fill="#FFFFFF"/>'
+  + '<circle cx="16" cy="10" r="2.1" fill="#FFFFFF"/>'
+  + '</svg>';
+
+var ICON_QUEST = '<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">'
+  + '<defs><radialGradient id="qball" cx="34%" cy="26%" r="72%">'
+  + '<stop offset="0" stop-color="#A8D4FF"/><stop offset=".55" stop-color="#1F66D2"/><stop offset="1" stop-color="#07286B"/>'
+  + '</radialGradient></defs>'
+  + '<circle cx="16" cy="16" r="13.6" fill="url(#qball)" stroke="#06286B" stroke-width="1"/>'
+  + '<text x="16" y="24.5" font-family="SimSun,serif" font-size="22" font-weight="bold" fill="#FFFFFF" text-anchor="middle">?</text>'
+  + '</svg>';
+
+var ICON_WARN = '<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">'
+  + '<polygon points="16,2.5 31,29 1,29" fill="#FFD21E" stroke="#8A6A00" stroke-width="1.4"/>'
+  + '<rect x="14.6" y="11" width="2.8" height="10" fill="#000000"/>'
+  + '<rect x="14.6" y="23" width="2.8" height="2.8" fill="#000000"/>'
+  + '</svg>';
+
+var ICON_HEART = '<svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">'
+  + '<path d="M16 28C7 21 2.5 16 2.5 10.6 2.5 6.4 5.8 3.5 9.6 3.5c3 0 5 1.9 6.4 4.2C17.4 5.4 19.4 3.5 22.4 3.5 26.2 3.5 29.5 6.4 29.5 10.6 29.5 16 25 21 16 28z" fill="#FF9AD2" stroke="#C0508F" stroke-width="1.2"/>'
+  + '</svg>';
+
+var ICON_MINI = '<svg viewBox="0 0 32 32" width="15" height="15" aria-hidden="true">'
+  + '<polygon points="' + STAR_PTS + '" fill="#FFC81E" stroke="#B87C00" stroke-width="1.5"/>'
+  + '</svg>';
+
+/* ================= 窗口基础 ================= */
+function makeWin(inner, cls){
+  var el = document.createElement('div');
+  el.className = 'win' + (cls ? ' ' + cls : '');
+  el.style.zIndex = ++zTop;
+  el.innerHTML = inner;
+  stage.appendChild(el);
+  return el;
+}
+function tbHtml(title, closable){
+  return '<div class="tb"><span class="t">' + title + '</span>'
+    + (closable ? '<button class="x" aria-label="关闭"><i></i></button>' : '')
+    + '</div>';
+}
+function closeWin(el, cb){
+  if(!el || !el.parentNode){ if(cb) cb(); return; }
+  if(REDUCED){ el.remove(); if(cb) cb(); return; }
+  var called = false;
+  var go = function(){
+    if(called) return;
+    called = true;
+    el.remove();
+    if(cb) cb();
+  };
+  var a = el.animate(
+    [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(.94)', opacity: 0 }],
+    { duration: 130, easing: 'ease-in' }
+  );
+  a.onfinish = go;
+  setTimeout(go, 200);
+}
+
+/* ================= 弹窗 ================= */
+function ask(o){
+  return new Promise(function(resolve){
+    var labels = o.buttons || ['确定'];
+    var btns = labels.map(function(l, i){
+      return '<button class="btn' + (i === 0 ? ' default' : '') + '" data-i="' + i + '">' + l + '</button>';
+    }).join('');
+
+    var html = tbHtml(o.title || '12岁の我', true)
+      + '<div class="dlg-body">'
+      + (o.icon ? '<div class="dlg-ico">' + o.icon + '</div>' : '')
+      + '<div class="dlg-msg">' + o.text + '</div>'
+      + '</div><div class="dlg-btns">' + btns + '</div>';
+
+    var el = makeWin(html, 'dialog');
+    if(o.width) el.style.width = o.width + 'px';
+
+    var done = false;
+    function finish(idx){
+      if(done) return;
+      done = true;
+      sndClick();
+      closeWin(el, function(){ resolve(idx); });
+    }
+
+    el.addEventListener('click', function(ev){
+      var b = ev.target.closest ? ev.target.closest('button') : null;
+      if(!b) return;
+      if(b.classList.contains('x')){ finish(0); return; }
+      if(b.dataset.i !== undefined){ finish(parseInt(b.dataset.i, 10)); }
+    });
+
+    if(!REDUCED){
+      el.animate([{ opacity: .35 }, { opacity: 1 }], { duration: 70 });
+    }
+    sndDialog();
+
+    var first = el.querySelector('.btn');
+    if(first) setTimeout(function(){ first.focus({ preventScroll: true }); }, 60);
+  });
+}
+
+/* ================= 点阵字 ================= */
+function sampleGlyph(ch, n){
+  var S = n * 6;
+  var c = document.createElement('canvas');
+  c.width = S; c.height = S;
+  var g = c.getContext('2d', { willReadFrequently: true });
+  g.fillStyle = '#fff';
+  g.fillRect(0, 0, S, S);
+  g.fillStyle = '#000';
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  var fs = Math.round(S * 0.9);
+  g.font = 'bold ' + fs + 'px "宋体","SimSun","Microsoft YaHei",serif';
+  g.fillText(ch, S / 2, S / 2);
+
+  var data = g.getImageData(0, 0, S, S).data;
+  var cp = 6;
+  var dots = [];
+  var minX = n, minY = n, maxX = -1, maxY = -1;
+
+  for(var y = 0; y < n; y++){
+    for(var x = 0; x < n; x++){
+      var dark = 0, tot = 0;
+      for(var py = 0; py < cp; py++){
+        for(var px = 0; px < cp; px++){
+          var ix = (((y * cp + py) * S) + (x * cp + px)) * 4;
+          var v = (data[ix] + data[ix + 1] + data[ix + 2]) / 3;
+          tot++;
+          if(v < 150) dark++;
+        }
+      }
+      if(dark / tot > 0.38){
+        dots.push([x, y]);
+        if(x < minX) minX = x;
+        if(x > maxX) maxX = x;
+        if(y < minY) minY = y;
+        if(y > maxY) maxY = y;
+      }
+    }
+  }
+  return { dots: dots, minX: minX, minY: minY, maxX: maxX, maxY: maxY };
+}
+
+function makeCharWindow(ch, color, cell){
+  var n = 18;
+  var s = sampleGlyph(ch, n);
+  var cols = s.maxX - s.minX + 1;
+  var rows = s.maxY - s.minY + 1;
+
+  var cv = document.createElement('canvas');
+  cv.width = cols * cell;
+  cv.height = rows * cell;
+  var ctx = cv.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+
+  for(var i = 0; i < s.dots.length; i++){
+    var px = (s.dots[i][0] - s.minX) * cell;
+    var py = (s.dots[i][1] - s.minY) * cell;
+    ctx.fillStyle = color;
+    ctx.fillRect(px, py, cell - 1, cell - 1);
+    ctx.fillStyle = 'rgba(255,255,255,.45)';
+    ctx.fillRect(px, py, cell - 1, 1);
+    ctx.fillStyle = 'rgba(0,0,0,.22)';
+    ctx.fillRect(px, py + cell - 2, cell - 1, 1);
+  }
+
+  var el = makeWin(tbHtml('给十年后的我', true) + '<div class="charwrap"></div>', 'charwin');
+  el.querySelector('.charwrap').appendChild(cv);
+  return el;
+}
+
+/* ================= 1. 七个点阵字 ================= */
+var charWins = [];
+
+/* 位置按案例逐窗错位：上排 你好呀，下排 未来的我（单位为窗口边长） */
+var CHAR_LIST = [
+  ['你', '#F05123', -1.04, -0.94],
+  ['好', '#F59B23', -0.28, -0.80],
+  ['呀', '#FFD400',  0.61, -1.04],
+  ['未', '#5FBF3A', -1.70,  0.24],
+  ['来', '#2A6FD6', -0.85,  0.33],
+  ['的', '#A855D5',  0.07,  0.24],
+  ['我', '#9B4FD1',  0.93,  0.30]
+];
+
+async function showChars(){
+  var vw = window.innerWidth;
+  var vh = window.innerHeight - 30;
+  var cx = vw / 2;
+  var cy = vh / 2;
+  var cell = Math.max(5, Math.min(11, Math.round(vw * 0.135 / 18)));
+
+  charWins = [];
+  for(var i = 0; i < CHAR_LIST.length; i++){
+    var el = makeCharWindow(CHAR_LIST[i][0], CHAR_LIST[i][1], cell);
+    el.style.visibility = 'hidden';
+    el.style.opacity = '0';
+    charWins.push(el);
+  }
+
+  var U = 110;
+  charWins.forEach(function(w){
+    var size = Math.max(w.offsetWidth, w.offsetHeight);
+    if(size > U) U = size;
+  });
+
+  for(var j = 0; j < charWins.length; j++){
+    var w = charWins[j];
+    var x = Math.round(cx + CHAR_LIST[j][2] * U - w.offsetWidth / 2);
+    var y = Math.round(cy + CHAR_LIST[j][3] * U - w.offsetHeight / 2);
+    x = Math.max(6, Math.min(x, vw - w.offsetWidth - 6));
+    y = Math.max(6, Math.min(y, vh - w.offsetHeight - 6));
+    w.style.left = x + 'px';
+    w.style.top = y + 'px';
+    w.style.zIndex = 20 + j;
+  }
+  zTop = 40;
+
+  await sleep(180);
+
+  for(var m = 0; m < charWins.length; m++){
+    var el2 = charWins[m];
+    charWins.forEach(function(o){
+      if(o === el2) return;
+      var t = o.querySelector('.tb');
+      if(t) t.classList.add('inactive');
+    });
+    el2.style.visibility = 'visible';
+    el2.style.opacity = '1';
+    if(!REDUCED){
+      el2.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 90 });
+    }
+    blip(1280, 0.04, 0.05, 'square');
+    await sleep(500);
+  }
+}
+
+/* ================= 11-A. 隧道穿梭 ================= */
+function tunnel(){
+  return new Promise(function(resolve){
+    var base = [];
+    for(var i = 0; i < 26; i++){
+      var el = document.createElement('div');
+      el.className = 'win ghost';
+      el.style.zIndex = ++zTop;
+      el.style.left = '50%';
+      el.style.top = '50%';
+      el.style.translate = '-50% -50%';
+      el.innerHTML = tbHtml('12岁の我', false)
+        + '<div class="ghost-body">'
+        + '<b style="width:82%"></b><b style="width:64%"></b><b style="width:74%"></b>'
+        + '</div>';
+      stage.appendChild(el);
+      base.push(el);
+
+      if(!REDUCED){
+        var rot = (Math.random() * 16 - 8).toFixed(1);
+        el.animate([
+          { transform: 'scale(2.5) rotate(' + rot + 'deg)', opacity: 0, offset: 0 },
+          { transform: 'scale(1.75) rotate(' + (rot * 0.3).toFixed(1) + 'deg)', opacity: 1, offset: .24 },
+          { transform: 'scale(.05) rotate(0deg)', opacity: 0, offset: 1 }
+        ], {
+          duration: 1050,
+          delay: i * 68,
+          easing: 'cubic-bezier(.45,0,.85,.35)',
+          fill: 'forwards'
+        });
+      }
+    }
+    sleep(REDUCED ? 400 : 1050 + 25 * 68).then(function(){
+      base.forEach(function(e){ e.remove(); });
+      resolve();
+    });
+  });
+}
+
+/* ================= 11-B. 五角星轨迹小窗 ================= */
+function starPoints(cx, cy, R, r, step){
+  var verts = [];
+  for(var i = 0; i < 5; i++){
+    var a1 = -Math.PI / 2 + i * 2 * Math.PI / 5;
+    var a2 = a1 + Math.PI / 5;
+    verts.push({ x: cx + R * Math.cos(a1), y: cy + R * Math.sin(a1) });
+    verts.push({ x: cx + r * Math.cos(a2), y: cy + r * Math.sin(a2) });
+  }
+  var pts = [];
+  for(var j = 0; j < verts.length; j++){
+    var a = verts[j];
+    var b = verts[(j + 1) % verts.length];
+    var len = Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
+    var n = Math.max(1, Math.round(len / step));
+    for(var k = 0; k < n; k++){
+      pts.push({ x: a.x + (b.x - a.x) * k / n, y: a.y + (b.y - a.y) * k / n });
+    }
+  }
+  return pts;
+}
+
+async function drawStarTrace(){
+  var vw = window.innerWidth;
+  var vh = window.innerHeight - 30;
+  var cx = vw / 2;
+  var cy = vh / 2;
+  var R = Math.min(300, Math.min(vw * 0.36, (vh - 120) / 2));
+  var r = R * 0.42;
+  var step = 36;
+  var pts = starPoints(cx, cy, R, r, step);
+  var els = [];
+
+  for(var i = 0; i < pts.length; i++){
+    var p = pts[i];
+    var el = document.createElement('div');
+    el.className = 'win mini';
+    el.style.zIndex = ++zTop;
+    el.style.left = Math.round(p.x - 38) + 'px';
+    el.style.top = Math.round(p.y - 20) + 'px';
+    el.innerHTML = tbHtml('·', false) + '<div class="mini-body">' + ICON_MINI + '</div>';
+    stage.appendChild(el);
+    els.push(el);
+
+    if(!REDUCED){
+      el.animate([
+        { transform: 'scale(.35)', opacity: 0 },
+        { transform: 'scale(1)', opacity: 1 }
+      ], { duration: 150, easing: 'cubic-bezier(.2,1.4,.5,1)', fill: 'both' });
+    }
+    blip(1500 + (i % 5) * 90, 0.025, 0.02, 'square');
+    await sleep(28);
+  }
+
+  await sleep(260);
+  for(var m = 0; m < els.length; m++){
+    var e2 = els[m];
+    if(REDUCED){ e2.remove(); continue; }
+    var a = e2.animate([
+      { opacity: 1, transform: 'scale(1)' },
+      { opacity: 0, transform: 'scale(.68)' }
+    ], { duration: 620, delay: m * 6, fill: 'forwards' });
+  }
+  await sleep(1100);
+  els.forEach(function(e){ if(e.parentNode) e.remove(); });
+}
+/* ================= 12. 巨大的金色星星 ================= */
+function showBigStar(){
+  var vw = window.innerWidth;
+  var vh = window.innerHeight - 30;
+  var size = Math.round(Math.min(400, vw * 0.72, vh * 0.70));
+
+  var el = document.createElement('div');
+  el.className = 'bigstar';
+  el.style.zIndex = ++zTop;
+  el.style.width = size + 'px';
+  el.style.height = size + 'px';
+  el.innerHTML =
+    '<div class="halo"></div>'
+    + '<svg viewBox="0 0 32 32" aria-hidden="true">'
+    + '<defs><linearGradient id="goldbig" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0" stop-color="#FFF6C6"/>'
+    + '<stop offset=".44" stop-color="#FFCF46"/>'
+    + '<stop offset="1" stop-color="#DC9200"/>'
+    + '</linearGradient></defs>'
+    + '<polygon points="' + STAR_PTS + '" fill="url(#goldbig)"/>'
+    + '<polygon points="' + STAR_PTS + '" fill="none" stroke="#FFF8DC" stroke-width=".7" opacity=".9"/>'
+    + '</svg>';
+  stage.appendChild(el);
+
+  if(!REDUCED){
+    el.animate([
+      { transform: 'scale(0)', opacity: .55 },
+      { transform: 'scale(1.08)', opacity: 1, offset: .68 },
+      { transform: 'scale(1)', opacity: 1 }
+    ], { duration: 540, easing: 'cubic-bezier(.2,1.25,.4,1)', fill: 'forwards' });
+
+    var halo = el.querySelector('.halo');
+    halo.animate([
+      { opacity: .5, transform: 'scale(.88)' },
+      { opacity: 1, transform: 'scale(1.08)' },
+      { opacity: .5, transform: 'scale(.88)' }
+    ], { duration: 2100, iterations: Infinity, easing: 'ease-in-out' });
+  }
+  return el;
+}
+
+/* ================= 13. 满屏的鼓励弹窗 ================= */
+var notesDone = false;
+
+function finishNotes(){
+  if(notesDone) return;
+  notesDone = true;
+  sndStar();
+  ask({
+    title: '12岁の我',
+    text: '程序就要关掉了。<br>谢谢你愿意陪12岁的我，玩到这里。',
+    icon: ICON_INFO,
+    buttons: ['再来一次', '关闭'],
+    
+  }).then(function(i){
+    if(i === 0) location.reload();
+  });
+}
+
+function spawnNotes(){
+  var texts = [
+    '累了就歇一歇!',
+    '记得吃早饭!',
+    '天冷穿秋裤!',
+    '多喝热水!',
+    '早点睡!',
+    '加油加油!',
+    '你是最棒的!',
+    '别老熬夜!',
+    '要开心哦，未来的我!',
+    '好好吃饭，按时长大!',
+    '别怕，慢慢来!',
+    '你已经很努力了!',
+    '难过也别憋着!',
+    '记得抬头看看天!',
+    '想哭就哭一场!',
+    '妈妈也会老的，多陪陪她!',
+    '别总一个人扛着!',
+    '会有人很喜欢你的!',
+    '少喝点酒!',
+    '十年后，也要记得我!'
+  ];
+
+  var vw = window.innerWidth;
+  var vh = window.innerHeight - Math.round(28 * U_SCALE) - 4;
+  var cols = vw >= 1100 ? 4 : (vw >= 760 ? 3 : 2);
+  var rows = Math.ceil(texts.length / cols);
+  var cellW = vw / cols;
+  var cellH = vh / rows;
+  var w = Math.round(Math.max(240, Math.min(vw * 0.30, cellW + 80)));
+  w = Math.min(w, vw - 16);
+  var boxH = Math.round(Math.max(110, Math.min(vh * 0.24, cellH + 44)));
+
+  var remaining = texts.length;
+  var els = [];
+  var order = texts.map(function(_, i){ return i; });
+  order.sort(function(){ return Math.random() - .5; });
+
+  texts.forEach(function(t, idx){
+    var icon = idx % 5 === 1 ? ICON_HEART : (idx % 5 === 3 ? ICON_WARN : ICON_INFO);
+    var el = makeWin(
+      tbHtml('12岁の我', true)
+      + '<div class="note-body"><span class="note-ico">' + icon + '</span>'
+      + '<span class="note-txt">' + t + '</span></div>'
+      + '<div class="note-btns"><button class="btn default">确定</button></div>',
+      'note'
+    );
+    el.style.width = w + 'px';
+    el.style.height = boxH + 'px';
+    el.style.visibility = 'hidden';
+
+    var col = idx % cols;
+    var row = Math.floor(idx / cols);
+    var x = col * cellW + (cellW - w) / 2 + (Math.random() - .5) * 18;
+    var y = row * cellH + (cellH - boxH) / 2 + (Math.random() - .5) * 14;
+    x = Math.max(4, Math.min(x, vw - w - 4));
+    y = Math.max(4, Math.min(y, vh - boxH - 4));
+    el.style.left = Math.round(x) + 'px';
+    el.style.top = Math.round(y) + 'px';
+    els.push(el);
+
+    var closed = false;
+    el.addEventListener('click', function(ev){
+      var b = ev.target.closest ? ev.target.closest('button') : null;
+      if(!b || closed) return;
+      closed = true;
+      sndClick();
+      closeWin(el, function(){
+        remaining--;
+        if(remaining <= 0) finishNotes();
+      });
+    });
+  });
+
+  order.forEach(function(slot, i){
+    setTimeout(function(){
+      var el = els[slot];
+      if(!el || !el.parentNode) return;
+      el.style.visibility = 'visible';
+      if(!REDUCED){
+        el.animate([{ opacity: .45 }, { opacity: 1 }], { duration: 70 });
+      }
+      blip(940 + (slot % 6) * 55, 0.03, 0.035, 'square');
+    }, 140 + i * 95);
+  });
+}
+
+/* ================= 全流程 ================= */
+async function run(){
+  audioInit();
+  await showChars();
+  await sleep(640);
+
+  await ask({
+    title: '12岁の我出品',
+    text: '我是12岁的你!这个程序我做了一整个暑假!!',
+    icon: ICON_INFO,
+    buttons: ['确定'],
+    
+  });
+
+  await ask({ title: '12岁の我', text: '你现在当上科学家了吗？', icon: ICON_QUEST, buttons: ['是', '否'] });
+  await ask({ title: '12岁の我', text: '那当上宇航员了吗？', icon: ICON_QUEST, buttons: ['是', '否'] });
+  await ask({ title: '12岁の我', text: '那真是太遗憾了……', icon: ICON_QUEST, buttons: ['还好', '抱歉'] });
+  await ask({ title: '12岁の我', text: '变成有钱人了吗？', icon: ICON_QUEST, buttons: ['是', '否'] });
+  await ask({
+    title: '12岁の我',
+    text: '成为小时候那个很厉害的大人了吗？',
+    icon: ICON_QUEST,
+    buttons: ['是', '否'],
+    
+  });
+  await ask({ title: '12岁の我', text: '那你自由了吗？', icon: ICON_QUEST, buttons: ['是', '否'] });
+  await ask({ title: '12岁の我', text: '那你现在开心吗?', icon: ICON_QUEST, buttons: ['开心', '不太开心'] });
+
+  await ask({
+    title: '12岁の我',
+    text: '别不开心，给你变个魔术',
+    icon: ICON_STAR,
+    buttons: ['确定'],
+    
+  });
+
+  /* 点阵字退场 */
+  charWins.forEach(function(el, i){
+    if(REDUCED){ el.remove(); return; }
+    el.animate([
+      { opacity: 1, transform: 'scale(1)' },
+      { opacity: 0, transform: 'scale(.86)' }
+    ], { duration: 380, delay: i * 14, fill: 'forwards' });
+  });
+  await sleep(REDUCED ? 0 : 460);
+  charWins.forEach(function(el){ if(el.parentNode) el.remove(); });
+  charWins = [];
+
+  /* 隧道 → 星星轨迹 */
+  await tunnel();
+  await drawStarTrace();
+
+  /* 金色大星星 */
+  var star = showBigStar();
+  sndStar();
+  await sleep(REDUCED ? 400 : 1180);
+
+  await ask({
+    title: '12岁の我',
+    text: '当当当当!⭐送你一颗星星⭐',
+    icon: ICON_STAR,
+    buttons: ['确定'],
+    
+  });
+
+  if(star && star.parentNode){
+    if(REDUCED){
+      star.remove();
+    }else{
+      star.animate([
+        { transform: 'scale(1)', opacity: 1 },
+        { transform: 'scale(.62) rotate(18deg)', opacity: 0 }
+      ], { duration: 340, easing: 'ease-in', fill: 'forwards' });
+      setTimeout(function(){ if(star.parentNode) star.remove(); }, 430);
+    }
+  }
+  await sleep(REDUCED ? 60 : 400);
+
+  spawnNotes();
+}
+
+/* ================= 桌面与任务栏 ================= */
+function startExperience(){
+  if(started) return;
+  started = true;
+  run();
+}
+
+var lastTap = 0;
+deskIcon.addEventListener('click', function(){
+  var now = Date.now();
+  if(now - lastTap < 750){ lastTap = 0; startExperience(); return; }
+  lastTap = now;
+  deskIcon.classList.add('selected');
+});
+deskIcon.addEventListener('dblclick', function(){ startExperience(); });
+deskIcon.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); startExperience(); }
+});
+
+/* 桌面上那几个老图标 */
+var dicons = Array.prototype.slice.call(document.querySelectorAll('.dicon'));
+
+function openDicon(ic){
+  audioInit();
+  sndClick();
+  ask({
+    title: ic.querySelector('.lbl').textContent,
+    text: ic.dataset.msg,
+    icon: ICON_INFO,
+    buttons: ['确定'],
+    
+  });
+}
+
+dicons.forEach(function(ic){
+  var last = 0;
+  ic.addEventListener('click', function(){
+    var now = Date.now();
+    if(now - last < 750){ last = 0; openDicon(ic); return; }
+    last = now;
+    dicons.forEach(function(o){ if(o !== ic) o.classList.remove('selected'); });
+    ic.classList.add('selected');
+  });
+  ic.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openDicon(ic); }
+  });
+});
+
+function closeMenu(){
+  startMenu.classList.remove('on');
+  startBtn.setAttribute('aria-expanded', 'false');
+}
+startBtn.addEventListener('click', function(){
+  audioInit();
+  var on = startMenu.classList.contains('on');
+  if(on){ closeMenu(); }
+  else{
+    startMenu.classList.add('on');
+    startBtn.setAttribute('aria-expanded', 'true');
+    sndClick();
+  }
+});
+startMenu.addEventListener('click', function(e){
+  var mi = e.target.closest ? e.target.closest('.mi') : null;
+  if(!mi) return;
+  closeMenu();
+  var act = mi.dataset.act;
+  if(act === 'restart'){
+    audioInit();
+    sndClick();
+    setTimeout(function(){ location.reload(); }, 260);
+  }
+  if(act === 'about'){
+    audioInit();
+    ask({
+      title: '关于 给十年后的我',
+      text: '12岁の我 出品<br>写于一个暑假的最后一天<br><br>用 Visual Basic 5.0 写的，一共 43 行。<br>如果你还能打开它，说明你把文件留到了今天。',
+      icon: ICON_INFO,
+      buttons: ['确定'],
+      
+    });
+  }
+});
+document.addEventListener('click', function(e){
+  if(!deskIcon.contains(e.target)) deskIcon.classList.remove('selected');
+  dicons.forEach(function(ic){ if(!ic.contains(e.target)) ic.classList.remove('selected'); });
+  if(!startMenu.contains(e.target) && !startBtn.contains(e.target)) closeMenu();
+});
+
+sndBtn.addEventListener('click', function(){
+  muted = !muted;
+  sndBtn.setAttribute('aria-pressed', muted ? 'true' : 'false');
+  muteSlash.style.display = muted ? '' : 'none';
+  if(!muted){ audioInit(); sndClick(); }
+});
+
+function tick(){
+  var d = new Date();
+  var h = d.getHours();
+  var ap = h < 12 ? '上午' : '下午';
+  var h12 = h % 12; if(h12 === 0) h12 = 12;
+  clockEl.textContent = ap + ' ' + h12 + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+tick();
+setInterval(tick, 20000);
+
+var stageHidden = false;
+taskBtn.addEventListener('click', function(){
+  audioInit();
+  sndClick();
+  stageHidden = !stageHidden;
+  stage.style.display = stageHidden ? 'none' : '';
+  taskBtn.setAttribute('aria-pressed', stageHidden ? 'false' : 'true');
+});
+
+window.addEventListener('resize', function(){
+  setScale();
+});
+
+})();
+</script>
+</body>
+</html>
